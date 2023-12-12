@@ -22,7 +22,8 @@ export const scheduleLocalNotification = async (
     sound: string, 
     color: string, 
     priority: Notifications.AndroidNotificationPriority, 
-    categoryIdentifier: string
+    categoryIdentifier: string,
+    date: Date,
   ) => {
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
@@ -35,7 +36,11 @@ export const scheduleLocalNotification = async (
       priority,
       categoryIdentifier,
     },
-    trigger: null, // You can specify a trigger if needed.
+    trigger: {
+      hour: date.getHours(),
+      minute: date.getMinutes(),
+      repeats: true
+    }
   });
   return notificationId;
 };
@@ -43,7 +48,11 @@ export const scheduleLocalNotification = async (
 //--------------------//
 
 export const notificationDaily = async () => {
-  scheduleLocalNotification(
+  let dateOfNotif = new Date()
+  dateOfNotif.setSeconds(20)
+  dateOfNotif.setMinutes(52)
+  console.log(dateOfNotif)
+  await scheduleLocalNotification(
     "🦠 Rappel ", 
     "Votre traitement", 
     "Aujourd'hui :\n\n 💊 Doliprane 700\n 💊 Aspirine\n 💊 Betadine", 
@@ -51,11 +60,17 @@ export const notificationDaily = async () => {
     "default", 
     "default", 
     Notifications.AndroidNotificationPriority.DEFAULT,
-    "reminder"
+    "reminder",
+    dateOfNotif
   );
 }
 
 export const notificationNow = async () => {
+  let dateOfNotif = new Date()
+  dateOfNotif.setDate(12)
+  dateOfNotif.setFullYear(2024)
+  dateOfNotif.setHours(14)
+  dateOfNotif.setMinutes(30)
   scheduleLocalNotification(
     "🦠 Rappel ", 
     "Votre traitement", 
@@ -64,11 +79,18 @@ export const notificationNow = async () => {
     "default", 
     "default", 
     Notifications.AndroidNotificationPriority.DEFAULT,
-    "reminder"
+    "reminder",
+    dateOfNotif
   );
 }
 
 export const notificationForgot = async () => {
+  let dateOfNotif = new Date()
+  dateOfNotif.setDate(12)
+  dateOfNotif.setMonth(12)
+  dateOfNotif.setFullYear(2023)
+  dateOfNotif.setHours(14)
+  dateOfNotif.setMinutes(32)
   scheduleLocalNotification(
     "⚠️ N'oubliez pas !", 
     "Votre traitement", 
@@ -77,7 +99,8 @@ export const notificationForgot = async () => {
     "default", 
     "red", 
     Notifications.AndroidNotificationPriority.HIGH,
-    "alertReminder"
+    "alertReminder",
+    dateOfNotif
   );
 }
 
