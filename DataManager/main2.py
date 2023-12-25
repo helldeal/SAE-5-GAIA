@@ -13,7 +13,6 @@ df = pd.read_csv('data/pharmacies', sep=';', encoding='latin-1', header=None, sk
 print("COLONNES => ", df.columns, "\n")
 
 # --------  DATAFRAME  ----------#
-df = pd.read_csv('data/pharmacies.csv', sep=';', skiprows=[0]) 
 new_column_names = [str(i) for i in range(32)]
 
 df.columns = new_column_names
@@ -167,14 +166,67 @@ specific_values = [
     'Etablissement de Soins Pluridisciplinaire',
     'Maison de santé (L.6223-3)'
 ]
+df = df[df['type'].isin(specific_values)]
+df.sort_values(by=['type'], inplace=True)
 
-print(df[df["type"] == "Centre Hospitalier Régional (C.H.R.)"])
+# --------  FORMAT ADRESS  ----------#
+df['adress1'] = df['adress1'].astype(str)
+replacements = {
+    'R': 'rue',
+    'BD': 'boulevard',
+    'AV': 'avenue',
+    'PL': 'place',
+    'CHEM': 'chemin',
+    'ALL': 'allée',
+    'IMP': 'impasse',
+    'LD': 'lieu-dit',
+    'RTE': 'route',
+    'CRS': 'cours',
+    'CCAL': 'centre commercial',
+    'CAR': 'carrefour',
+    'SQ': 'square',
+    'ZI': 'Zone Industrielle',
+    'FG': 'faubourg',
+    'QU': 'quartier',
+    'PR': 'promenade',
+    'ZAC': 'Zone Artisanale ou Commerciale',
+    'LOT': 'lotissement',
+    'CITE': 'cité',
+    'PAS': 'passage',
+    'CHAUS': 'chaussée',
+    'QUAI': 'quai',
 
-mask = df['type'].isin(specific_values)
+}
+df['adress2'] = df['adress2'].replace(replacements)
 
-filtered_df = df[mask]
-filtered_df.sort_values(by=['type'], inplace=True)
-df = filtered_df
+exceptions = {'du', 'de', 'et', 'la', 'le', 'des'}
+def format_address(adress):
+    adress = str(adress)
+    words = adress.lower().split()
+    final_words = []
+    for word in words:
+        final_words.append(word if word in exceptions else word.capitalize())
+    return ' '.join(final_words)
+df['adress3'] = df['adress3'].apply(format_address)
+
+def join_address(row):
+    adress1 = row["adress1"]
+
+    if ((adress1 == 'nan') and (row["adress2"] == 'nan')):
+        row["adress"] = ""
+        return row
+    
+    adress1 = str(int(float(adress1))) if not adress1=='nan' else ''
+    
+    if adress1 == "":
+        row["adress"] = f"{adress1} {row['adress2']} {row['adress3']}, {row['city']}"
+    else:
+        row["adress"] = f"{row['adress2']} {row['adress3']}, {row['city']}"
+    
+    return row
+
+df = df.apply(lambda row: join_address(row), axis=1)
+print(df.head())
 
 #--------  LAMBERT 93 => WGS 84  ----------#
 lambert93 = pyproj.Proj(init='epsg:2154')
@@ -199,10 +251,7 @@ def format_with_zeros(value):
 df['phone'] = df['phone'].apply(format_with_zeros)
 
 # --------  FORMAT GPS  ----------#
-#df[['latitude', 'longitude']] = df.apply(lambda x: convert_coordinates(x['latitude'], x['longitude']), axis=1)
+df[['latitude', 'longitude']] = df.apply(lambda x: convert_coordinates(x['latitude'], x['longitude']), axis=1)
 
 # --------  EXPORT  ----------#
 df.to_json('data/out/pharmacies.json', orient='records')
-
-
-

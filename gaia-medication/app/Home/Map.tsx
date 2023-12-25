@@ -79,8 +79,7 @@ export default function Map() {
     <View>
       <Text numberOfLines={2} ellipsizeMode="tail" style={styles.modalTitle}>{selectedPoint.Name}</Text>
       <Text style={styles.modalType}>{selectedPoint.type}</Text>
-      <Text>{selectedPoint.adress1} {selectedPoint.adress2} {selectedPoint.adress3}</Text>
-      <Text>{selectedPoint.city}</Text>
+      <Text>{selectedPoint.adress}</Text>
       {selectedPoint.phone != null ? (
         <Button title="Contacter" onPress={contact}/>
       ): <Text>No phone number available here... 🙁</Text>}
