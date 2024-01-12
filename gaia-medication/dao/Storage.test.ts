@@ -89,4 +89,40 @@ describe('Storage Module Tests', () => {
       
         // Add more tests as needed for error cases or different scenarios
       });
+
+
+      describe('addItemToList', () => {
+        beforeEach(() => {
+          jest.clearAllMocks();
+        });
+      
+        it('adds an item to an empty list', async () => {
+          const key = 'testList';
+          const newItem = { id: 1, name: 'New Item' };
+      
+          // Simulate an empty list in storage
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+      
+          await addItemToList(key, newItem);
+      
+          // Check that setItem was called with the correct arguments
+          expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([newItem]));
+        });
+      
+        it('adds an item to an existing list', async () => {
+          const key = 'testList';
+          const existingItems = [{ id: 1, name: 'Existing Item' }];
+          const newItem = { id: 2, name: 'New Item' };
+      
+          // Simulate an existing list in storage
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingItems));
+      
+          await addItemToList(key, newItem);
+      
+          // Check that setItem was called with the correct arguments
+          expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([...existingItems, newItem]));
+        });
+      
+        // Add more tests as needed for error cases or different scenarios
+      });
 });
