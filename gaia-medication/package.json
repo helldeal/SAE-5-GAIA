@@ -10,7 +10,10 @@
     "web": "expo start --web"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "setupFiles": [
+      "./jestSetupFile.js"
+    ]
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
