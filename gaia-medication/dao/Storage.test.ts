@@ -27,12 +27,9 @@ describe('Storage Module Tests', () => {
           const nextUserId = await UserIdAutoIncrement();
           expect(nextUserId).toBe(1);
         });
-      
-        // Add more test cases for different scenarios, such as AsyncStorage errors
       });
 
       describe('readList', () => {
-        // Reset mocks before each test
         beforeEach(() => {
           jest.clearAllMocks();
         });
@@ -54,8 +51,6 @@ describe('Storage Module Tests', () => {
           const result = await readList(testKey);
           expect(result).toEqual([]);
         });
-      
-        // Add more tests as needed
       });
 
 
@@ -86,8 +81,6 @@ describe('Storage Module Tests', () => {
           const user = await getUserByID(1);
           expect(user).toBeNull();
         });
-      
-        // Add more tests as needed for error cases or different scenarios
       });
 
 
@@ -100,12 +93,10 @@ describe('Storage Module Tests', () => {
           const key = 'testList';
           const newItem = { id: 1, name: 'New Item' };
       
-          // Simulate an empty list in storage
           (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
       
           await addItemToList(key, newItem);
       
-          // Check that setItem was called with the correct arguments
           expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([newItem]));
         });
       
@@ -114,16 +105,13 @@ describe('Storage Module Tests', () => {
           const existingItems = [{ id: 1, name: 'Existing Item' }];
           const newItem = { id: 2, name: 'New Item' };
       
-          // Simulate an existing list in storage
           (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingItems));
       
           await addItemToList(key, newItem);
       
-          // Check that setItem was called with the correct arguments
           expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([...existingItems, newItem]));
         });
       
-        // Add more tests as needed for error cases or different scenarios
       });
 
 
@@ -137,12 +125,10 @@ describe('Storage Module Tests', () => {
           const existingList = [{ id: 1, name: 'Item1' }, { id: 2, name: 'Item2' }];
           const updatedItem = { id: 1, name: 'Updated Item' };
       
-          // Simulate existing list in storage
           (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
       
           await updateItemInList(key, 0, updatedItem);
       
-          // Check that setItem was called with the correct arguments
           expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([updatedItem, existingList[1]]));
         });
       
@@ -151,16 +137,12 @@ describe('Storage Module Tests', () => {
           const existingList = [{ id: 1, name: 'Item1' }];
           const newItem = { id: 2, name: 'New Item' };
       
-          // Simulate existing list in storage
           (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
       
           await updateItemInList(key, 2, newItem);
       
-          // Check that setItem was not called since the index is invalid
           expect(AsyncStorage.setItem).not.toHaveBeenCalled();
         });
-      
-        // Add more tests as needed for error cases or different scenarios
       });
 
 
@@ -174,12 +156,10 @@ describe('Storage Module Tests', () => {
           const key = 'testList';
           const existingList = [{ id: 1, name: 'Item1' }, { id: 2, name: 'Item2' }];
       
-          // Simulate existing list in storage
           (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
       
           await removeItemFromList(key, 0);
       
-          // Check that setItem was called with the correct arguments
           expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([existingList[1]]));
         });
       
@@ -187,16 +167,12 @@ describe('Storage Module Tests', () => {
           const key = 'testList';
           const existingList = [{ id: 1, name: 'Item1' }];
       
-          // Simulate existing list in storage
           (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
       
           await removeItemFromList(key, 2);
       
-          // Check that setItem was not called since the index is invalid
           expect(AsyncStorage.setItem).not.toHaveBeenCalled();
         });
-      
-        // Add more tests as needed for error cases or different scenarios
       });
 
 
@@ -212,59 +188,199 @@ describe('Storage Module Tests', () => {
           const cipToRemove = '456';
           const idUserToRemove = 1;
       
-          // Simulate existing list in storage
           (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
       
           await removeItemFromStock(cisToRemove, cipToRemove, idUserToRemove);
       
-          // Check that setItem was called with the correct arguments
           expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([]));
         });
       
         it('does not remove an item if it does not exist', async () => {
-          const key = 'stock';
           const existingList = [{ CIS: '123', CIP: '456', idUser: 1 }];
           const cisToRemove = '999';
           const cipToRemove = '888';
           const idUserToRemove = 2;
       
-          // Simulate existing list in storage
           (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
       
           await removeItemFromStock(cisToRemove, cipToRemove, idUserToRemove);
       
-          // Check that setItem was not called since the item does not exist
           expect(AsyncStorage.setItem).not.toHaveBeenCalled();
         });
-      
-        // Add more tests as needed for error cases or different scenarios
       });
 
-      describe('getAllTreatments', () => {
-        beforeEach(() => {
-          jest.clearAllMocks();
-        });
       
-        it('returns an empty array when there are no treatments', async () => {
-          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
-      
-          const treatments = await getAllTreatments();
-          expect(treatments).toEqual([]);
-        });
-      
-        it('returns a list of treatments when they are present', async () => {
-          const mockTreatments = JSON.stringify([
-            // Add mock treatment objects here
-            // Example: { name: 'Treatment1', userId: 1, ... }
-          ]);
-      
-          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(mockTreatments);
-      
-          const treatments = await getAllTreatments();
-          // Add expectations to check if treatments are processed correctly
-          // Example: expect(treatments).toEqual([...]);
-        });
-      
-        // Add more tests as needed for error cases or different scenarios
-      });
 });
+
+// jest.clearAllMocks();
+// jest.mock('./Storage', () => ({
+//     ...jest.requireActual('./Storage'), // keep the other exports of the module unchanged
+//     getAllTreatments: jest.fn(), // mock only getAllTreatments
+//   }));
+  
+//   const mockTreatments = [
+//     {
+//         description: 'Description1',
+//         instructions: [
+//             {
+//                 CIS: 63283736,
+//                 endDate: null,
+//                 endModality: "number",
+//                 endQuantity: 10,
+//                 name: "Med1",
+//                 quantity: 2,
+//                 regularFrequency: true,
+//                 regularFrequencyContinuity: "daily",
+//                 regularFrequencyDays: null,
+//                 regularFrequencyMode: "regular",
+//                 regularFrequencyNumber: "1",
+//                 regularFrequencyPeriods: "day",
+//                 takes: [
+//                     {
+//                         CIS: 63283736,
+//                         date: "2024-01-10T09:30:00.000Z",
+//                         quantity: 0,
+//                         taken: true,
+//                         treatmentName: "TraitementTest1",
+//                         userId: 1,
+//                         review: "c'est pas bon"
+//                     },
+//                     {
+//                         CIS: 63283736,
+//                         date: "2024-01-10T15:23:00.000Z",
+//                         quantity: 0,
+//                         taken: true,
+//                         treatmentName: "TraitementTest1",
+//                         userId: 1,
+//                         review: "Je suis mort avec ce truc"
+//                     }
+//                 ] 
+//             },
+//         ],                
+//         name: 'Treatment1',
+//         startDate: new Date("2024-01-10T13:44:03.404Z"),
+//         userId: 1
+//     },
+//     {
+//         description: 'Description2',
+//         instructions: [
+//             {
+//                 CIS: 63283737,
+//                 endDate: null,
+//                 endModality: "number",
+//                 endQuantity: 10,
+//                 name: "Med2",
+//                 quantity: 2,
+//                 regularFrequency: true,
+//                 regularFrequencyContinuity: "daily",
+//                 regularFrequencyDays: null,
+//                 regularFrequencyMode: "regular",
+//                 regularFrequencyNumber: "2",
+//                 regularFrequencyPeriods: "day",
+//                 takes: [
+//                     {
+//                         CIS: 63283737,
+//                         date: "2024-01-10T09:30:00.000Z",
+//                         quantity: 0,
+//                         taken: true,
+//                         treatmentName: "TraitementTest2",
+//                         userId: 1,
+//                         review: "c'est super cool"
+//                     },
+//                     {
+//                         CIS: 63283737,
+//                         date: "2024-01-10T15:23:00.000Z",
+//                         quantity: 0,
+//                         taken: true,
+//                         treatmentName: "TraitementTest2",
+//                         userId: 1,
+//                         review: "Pas si cool que ca enfait"
+//                     }
+//                 ] 
+//             },
+//         ],                
+//         name: 'Treatment2',
+//         startDate: new Date("2024-01-10T13:44:03.404Z"),
+//         userId: 1
+//     },
+//   ];
+//   const mockTakes = [
+//     {
+//         med: "Med1",
+//         take: {
+//             CIS: 63283736,
+//             date: "2024-01-10T09:30:00.000Z",
+//             quantity: 0,
+//             taken: true,
+//             treatmentName: "TraitementTest1",
+//             userId: 1,
+//             review: "c'est pas bon"
+//         },
+//         treatmentDescription: "Description1",
+//         treatmentName: "Treatment1",
+//     },
+//     {
+//         med: "Med1",
+//         take: {
+//             CIS: 63283736,
+//             date: "2024-01-10T15:23:00.000Z",
+//             quantity: 0,
+//             taken: true,
+//             treatmentName: "TraitementTest1",
+//             userId: 1,
+//             review: "Je suis mort avec ce truc"
+//         },
+//         treatmentDescription: "Description1",
+//         treatmentName: "Treatment1",
+//     },
+//     {
+//         med: "Med2",
+//         take: {
+//             CIS: 63283737,
+//             date: "2024-01-10T09:30:00.000Z",
+//             quantity: 0,
+//             taken: true,
+//             treatmentName: "TraitementTest2",
+//             userId: 1,
+//             review: "c'est super cool"
+//         },
+//         treatmentDescription: "Description2",
+//         treatmentName: "Treatment2",
+//     },
+//     {
+//         med: "Med2",
+//         take: {
+//             CIS: 63283737,
+//             date: "2024-01-10T15:23:00.000Z",
+//             quantity: 0,
+//             taken: true,
+//             treatmentName: "TraitementTest2",
+//             userId: 1,
+//             review: "Pas si cool que ca enfait"
+//         },
+//         treatmentDescription: "Description2",
+//         treatmentName: "Treatment2",
+//     },];
+
+
+//   describe('initTreatments', () => {
+//     it('returns an array of takes based on treatments', async () => {
+//       (getAllTreatments as jest.Mock).mockResolvedValue(mockTreatments);
+//       const takes = await initTreatments();
+//       expect(takes).toEqual(mockTakes);
+//     });
+//   });
+
+//   describe('getTreatmentByName', () => {
+//     it('returns a treatment when it exists', async () => {
+//       (getAllTreatments as jest.Mock).mockResolvedValue(mockTreatments);
+//       const treatment = await getTreatmentByName('Treatment1',1);
+//       expect(treatment).toEqual(mockTreatments[0]);
+//     });
+
+//     it('returns null when the treatment does not exist', async () => {
+//       (getAllTreatments as jest.Mock).mockResolvedValue(mockTreatments);
+//       const treatment = await getTreatmentByName('Treatment3',1);
+//       expect(treatment).toBeNull();
+//     });
+//   });
