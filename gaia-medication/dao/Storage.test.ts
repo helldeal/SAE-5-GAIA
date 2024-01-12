@@ -125,4 +125,146 @@ describe('Storage Module Tests', () => {
       
         // Add more tests as needed for error cases or different scenarios
       });
+
+
+      describe('updateItemInList', () => {
+        beforeEach(() => {
+          jest.clearAllMocks();
+        });
+      
+        it('updates an item in the list', async () => {
+          const key = 'testList';
+          const existingList = [{ id: 1, name: 'Item1' }, { id: 2, name: 'Item2' }];
+          const updatedItem = { id: 1, name: 'Updated Item' };
+      
+          // Simulate existing list in storage
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
+      
+          await updateItemInList(key, 0, updatedItem);
+      
+          // Check that setItem was called with the correct arguments
+          expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([updatedItem, existingList[1]]));
+        });
+      
+        it('does not update for an invalid index', async () => {
+          const key = 'testList';
+          const existingList = [{ id: 1, name: 'Item1' }];
+          const newItem = { id: 2, name: 'New Item' };
+      
+          // Simulate existing list in storage
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
+      
+          await updateItemInList(key, 2, newItem);
+      
+          // Check that setItem was not called since the index is invalid
+          expect(AsyncStorage.setItem).not.toHaveBeenCalled();
+        });
+      
+        // Add more tests as needed for error cases or different scenarios
+      });
+
+
+
+      describe('removeItemFromList', () => {
+        beforeEach(() => {
+          jest.clearAllMocks();
+        });
+      
+        it('removes an item from the list', async () => {
+          const key = 'testList';
+          const existingList = [{ id: 1, name: 'Item1' }, { id: 2, name: 'Item2' }];
+      
+          // Simulate existing list in storage
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
+      
+          await removeItemFromList(key, 0);
+      
+          // Check that setItem was called with the correct arguments
+          expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([existingList[1]]));
+        });
+      
+        it('does not remove an item for an invalid index', async () => {
+          const key = 'testList';
+          const existingList = [{ id: 1, name: 'Item1' }];
+      
+          // Simulate existing list in storage
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
+      
+          await removeItemFromList(key, 2);
+      
+          // Check that setItem was not called since the index is invalid
+          expect(AsyncStorage.setItem).not.toHaveBeenCalled();
+        });
+      
+        // Add more tests as needed for error cases or different scenarios
+      });
+
+
+      describe('removeItemFromStock', () => {
+        beforeEach(() => {
+          jest.clearAllMocks();
+        });
+      
+        it('removes an item from the stock', async () => {
+          const key = 'stock';
+          const existingList = [{ CIS: '123', CIP: '456', idUser: 1 }];
+          const cisToRemove = '123';
+          const cipToRemove = '456';
+          const idUserToRemove = 1;
+      
+          // Simulate existing list in storage
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
+      
+          await removeItemFromStock(cisToRemove, cipToRemove, idUserToRemove);
+      
+          // Check that setItem was called with the correct arguments
+          expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify([]));
+        });
+      
+        it('does not remove an item if it does not exist', async () => {
+          const key = 'stock';
+          const existingList = [{ CIS: '123', CIP: '456', idUser: 1 }];
+          const cisToRemove = '999';
+          const cipToRemove = '888';
+          const idUserToRemove = 2;
+      
+          // Simulate existing list in storage
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingList));
+      
+          await removeItemFromStock(cisToRemove, cipToRemove, idUserToRemove);
+      
+          // Check that setItem was not called since the item does not exist
+          expect(AsyncStorage.setItem).not.toHaveBeenCalled();
+        });
+      
+        // Add more tests as needed for error cases or different scenarios
+      });
+
+      describe('getAllTreatments', () => {
+        beforeEach(() => {
+          jest.clearAllMocks();
+        });
+      
+        it('returns an empty array when there are no treatments', async () => {
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+      
+          const treatments = await getAllTreatments();
+          expect(treatments).toEqual([]);
+        });
+      
+        it('returns a list of treatments when they are present', async () => {
+          const mockTreatments = JSON.stringify([
+            // Add mock treatment objects here
+            // Example: { name: 'Treatment1', userId: 1, ... }
+          ]);
+      
+          (AsyncStorage.getItem as jest.Mock).mockResolvedValue(mockTreatments);
+      
+          const treatments = await getAllTreatments();
+          // Add expectations to check if treatments are processed correctly
+          // Example: expect(treatments).toEqual([...]);
+        });
+      
+        // Add more tests as needed for error cases or different scenarios
+      });
 });
